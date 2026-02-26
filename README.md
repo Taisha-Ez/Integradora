@@ -33,8 +33,8 @@ Para que la API funcione correctamente, **NO** se deben poner las credenciales e
 ### Opción B: Desde la Terminal
 Si prefieres comandos, ejecuta estos tres en la raíz del proyecto:
 ```bash
-dotnet user-secrets set "ConnectionStrings:MySql" "Server=localhost;Port=3306;Database=appfenixvales;User=root;Password=TU_CONTRASEÑA;"
-dotnet user-secrets set "ConnectionStrings:MongoDb" "mongodb://localhost:27017/appfenixvales"
+dotnet user-secrets set "ConnectionStrings:MySql" "Server=localhost;Port=3306;Database=NOMBRE_DE_BD;User=root;Password=TU_CONTRASEÑA;"
+dotnet user-secrets set "ConnectionStrings:MongoDb" "mongodb://localhost:27017/nombredebd"
 dotnet user-secrets set "Jwt:Key" "ESTA_ES_UNA_LLAVE_SUPER_SECRETA_Y_LARGA_DE_MAS_DE_32_CARACTERES"
 ```
 
@@ -51,7 +51,7 @@ dotnet ef database update
 * **Visual Studio**: Presiona `F5` o el botón de reproducir.
 * **CLI**: Ejecuta `dotnet run`.
 
-La documentación interactiva se abrirá en: `http://localhost:XXXX/swagger`
+La documentación interactiva se abrirá en: `http://localhost:5185/swagger`
 
 ## Estructura del Código
 
