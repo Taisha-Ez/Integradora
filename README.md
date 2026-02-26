@@ -21,8 +21,8 @@ Para que la API funcione correctamente, **NO** se deben poner las credenciales e
 ```json
 {
   "ConnectionStrings": {
-    "MySql": "Server=localhost;Port=3306;Database=appfenixvales;User=root;Password=TU_CONTRASEÑA;",
-    "MongoDb": "mongodb://localhost:27017/appfenixvales"
+    "MySql": "Server=localhost;Port=3306;Database=NOMBRE_DE_BD;User=root;Password=TU_CONTRASEÑA;",
+    "MongoDb": "mongodb://localhost:27017/nombredebd"
   },
   "Jwt": {
     "Key": "ESTA_ES_UNA_LLAVE_SUPER_SECRETA_Y_LARGA_DE_MAS_DE_32_CARACTERES"
