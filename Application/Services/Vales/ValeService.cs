@@ -70,5 +70,23 @@ namespace fenixjobs_api.Application.Services.Vales
             response.Message = "Vale creado exitosamente con status Pendiente.";
             return response;
         }
+
+        public async Task<ServiceResponseDto<List<Vale>>> GetAllAsync(string? status = null)
+        {
+            var response = new ServiceResponseDto<List<Vale>>();
+
+            try
+            {
+                response.Data = await _valeRepository.GetAllAsync(status);
+                response.Message = "Vales obtenidos exitosamente.";
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = "Error al obtener vales: " + ex.Message;
+            }
+
+            return response;
+        }
     }
 }
