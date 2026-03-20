@@ -10,5 +10,17 @@ namespace fenixjobs_api.Infrastructure.Persistence.MySQL
         }
 
         public DbSet<Users> Users { get; set; }
+        public DbSet<TypeCustomers> TypeCustomers { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<TypeCustomers>()
+                .HasOne(tc => tc.User)
+                .WithMany(u => u.TypeCustomers)
+                .HasForeignKey(tc => tc.id_user)
+                .HasPrincipalKey(u => u.id_usuario);
+        }
     }
 }

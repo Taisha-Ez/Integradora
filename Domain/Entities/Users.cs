@@ -23,5 +23,7 @@ namespace fenixjobs_api.Domain.Entities
         public string contrasenia { get; set; }
 
         public string tipo_usuario { get; set; } = "cliente";
+
+        public ICollection<TypeCustomers> TypeCustomers { get; set; } = new List<TypeCustomers>();
     }
 }
