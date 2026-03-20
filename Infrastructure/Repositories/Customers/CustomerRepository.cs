@@ -1,5 +1,5 @@
 using fenixjobs_api.Application.Interfaces.Customers;
-using fenixjobs_api.Domain.Entities;
+using fenixjobs_api.Application.DTOs.Customers;
 using fenixjobs_api.Infrastructure.Persistence.MySQL;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,11 +14,21 @@ namespace fenixjobs_api.Infrastructure.Repositories.Customers
             _context = context;
         }
 
-        public async Task<List<TypeCustomers>> GetAllAsync()
+        public async Task<List<CustomerDto>> GetAllAsync()
         {
             return await _context.TypeCustomers
                 .AsNoTracking()
-                .Include(c => c.User)
+                .Join(
+                    _context.Users.AsNoTracking(),
+                    customer => customer.id_user,
+                    user => user.id_usuario,
+                    (customer, user) => new CustomerDto
+                    {
+                        Id = customer.id,
+                        Type = customer.Type,
+                        IdUser = customer.id_user,
+                        UserName = user.usuario
+                    })
                 .ToListAsync();
         }
     }

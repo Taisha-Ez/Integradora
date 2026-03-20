@@ -19,15 +19,7 @@ namespace fenixjobs_api.Application.Services.Customers
 
             try
             {
-                var customers = await _customerRepository.GetAllAsync();
-
-                response.Data = customers.Select(c => new CustomerDto
-                {
-                    Id = c.id,
-                    Type = c.Type,
-                    IdUser = c.id_user,
-                    UserName = c.User?.usuario ?? string.Empty
-                }).ToList();
+                response.Data = await _customerRepository.GetAllAsync();
 
                 response.Message = "Customers obtenidos exitosamente.";
             }
