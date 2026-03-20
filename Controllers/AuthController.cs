@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using fenixjobs_api.Application.DTOs;
-using fenixjobs_api.Application.Interfaces;
+using fenixjobs_api.Application.DTOs.Auth;
+using fenixjobs_api.Application.Interfaces.Auth;
 
 namespace fenixjobs_api.Controllers
 {

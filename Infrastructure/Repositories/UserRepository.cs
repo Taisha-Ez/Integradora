@@ -1,4 +1,4 @@
-﻿using fenixjobs_api.Application.Interfaces;
+﻿using fenixjobs_api.Application.Interfaces.Auth;
 using fenixjobs_api.Domain.Entities;
 using fenixjobs_api.Infrastructure.Persistence.MySQL;
 using Microsoft.EntityFrameworkCore;

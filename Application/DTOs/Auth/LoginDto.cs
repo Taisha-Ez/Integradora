@@ -1,6 +1,6 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
-namespace fenixjobs_api.Application.DTOs
+namespace fenixjobs_api.Application.DTOs.Auth
 {
     public class LoginDto
     {

@@ -1,5 +1,7 @@
-﻿using fenixjobs_api.Application.DTOs;
+using fenixjobs_api.Application.DTOs.Auth;
+using fenixjobs_api.Application.DTOs.Common;
 using fenixjobs_api.Application.Interfaces;
+using fenixjobs_api.Application.Interfaces.Auth;
 using fenixjobs_api.Domain.Documents;
 using fenixjobs_api.Domain.Entities;
 using Microsoft.IdentityModel.Tokens;
@@ -7,7 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace fenixjobs_api.Application.Services
+namespace fenixjobs_api.Application.Services.Auth
 {
     public class AuthService : IAuthService
     {
@@ -33,7 +35,7 @@ namespace fenixjobs_api.Application.Services
                 if (existingUser != null)
                 {
                     response.Status = false;
-                    response.Message = "El nombre de usuario ya está registrado.";
+                    response.Message = "El nombre de usuario ya esta registrado.";
                     return response;
                 }
 
@@ -99,7 +101,7 @@ namespace fenixjobs_api.Application.Services
             {
                 Action = "Login",
                 Email = dto.Usuario,
-                Details = "Inicio de sesión exitoso",
+                Details = "Inicio de sesion exitoso",
                 CreatedAt = DateTime.UtcNow
             });
 

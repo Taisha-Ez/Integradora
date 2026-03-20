@@ -1,4 +1,4 @@
-﻿namespace fenixjobs_api.Application.DTOs
+namespace fenixjobs_api.Application.DTOs.Common
 {
     public class ServiceResponseDto<T>
     {
