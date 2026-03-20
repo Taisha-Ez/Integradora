@@ -7,6 +7,12 @@ namespace fenixjobs_api.Controllers
     [ApiController]
     public class CustomersController : ControllerBase
     {
+        private static readonly HashSet<string> AllowedTypes = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "Cumplidos",
+            "Morosos"
+        };
+
         private readonly ICustomerService _customerService;
 
         public CustomersController(ICustomerService customerService)
@@ -15,9 +21,21 @@ namespace fenixjobs_api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("{type}")]
+        public async Task<IActionResult> GetAll([FromRoute] string? type = null, [FromQuery] string? queryType = null)
         {
-            var response = await _customerService.GetAllAsync();
+            var effectiveType = type ?? queryType;
+
+            if (!string.IsNullOrWhiteSpace(effectiveType) && !AllowedTypes.Contains(effectiveType))
+            {
+                return BadRequest(new
+                {
+                    Status = false,
+                    Message = "Tipo invalido. Usa 'Cumplidos' o 'Morosos'."
+                });
+            }
+
+            var response = await _customerService.GetAllAsync(effectiveType);
 
             if (!response.Status)
             {

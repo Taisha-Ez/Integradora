@@ -4,6 +4,6 @@ namespace fenixjobs_api.Application.Interfaces.Customers
 {
     public interface ICustomerRepository
     {
-        Task<List<CustomerDto>> GetAllAsync();
+        Task<List<CustomerDto>> GetAllAsync(string? type = null);
     }
 }

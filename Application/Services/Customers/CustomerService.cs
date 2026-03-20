@@ -13,13 +13,13 @@ namespace fenixjobs_api.Application.Services.Customers
             _customerRepository = customerRepository;
         }
 
-        public async Task<ServiceResponseDto<List<CustomerDto>>> GetAllAsync()
+        public async Task<ServiceResponseDto<List<CustomerDto>>> GetAllAsync(string? type = null)
         {
             var response = new ServiceResponseDto<List<CustomerDto>>();
 
             try
             {
-                response.Data = await _customerRepository.GetAllAsync();
+                response.Data = await _customerRepository.GetAllAsync(type);
 
                 response.Message = "Customers obtenidos exitosamente.";
             }

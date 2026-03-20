@@ -14,10 +14,16 @@ namespace fenixjobs_api.Infrastructure.Repositories.Customers
             _context = context;
         }
 
-        public async Task<List<CustomerDto>> GetAllAsync()
+        public async Task<List<CustomerDto>> GetAllAsync(string? type = null)
         {
-            return await _context.TypeCustomers
-                .AsNoTracking()
+            var typeCustomersQuery = _context.TypeCustomers.AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(type))
+            {
+                typeCustomersQuery = typeCustomersQuery.Where(customer => customer.Type == type);
+            }
+
+            return await typeCustomersQuery
                 .Join(
                     _context.Users.AsNoTracking(),
                     customer => customer.id_user,
