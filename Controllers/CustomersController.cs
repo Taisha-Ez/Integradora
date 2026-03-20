@@ -1,10 +1,12 @@
 using fenixjobs_api.Application.Interfaces.Customers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace fenixjobs_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "admin")]
     public class CustomersController : ControllerBase
     {
         private static readonly HashSet<string> AllowedTypes = new(StringComparer.OrdinalIgnoreCase)
