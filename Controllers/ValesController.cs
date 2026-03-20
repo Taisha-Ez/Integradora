@@ -8,9 +8,20 @@ namespace fenixjobs_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "cliente")]
+    [Authorize]
     public class ValesController : ControllerBase
     {
+        private static readonly Dictionary<string, string?> StatusMap = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Todos"] = null,
+            ["Pendiente"] = "Pendiente",
+            ["Pendientes"] = "Pendiente",
+            ["Aceptado"] = "Aceptado",
+            ["Aceptados"] = "Aceptado",
+            ["Rechazado"] = "Rechazado",
+            ["Rechazados"] = "Rechazado"
+        };
+
         private readonly IValeService _valeService;
 
         public ValesController(IValeService valeService)
@@ -18,6 +29,37 @@ namespace fenixjobs_api.Controllers
             _valeService = valeService;
         }
 
+        [Authorize(Roles = "admin")]
+        [HttpGet]
+        [HttpGet("{status}")]
+        public async Task<IActionResult> GetAll([FromRoute] string? status = null, [FromQuery(Name = "status")] string? queryStatus = null)
+        {
+            var effectiveStatus = status ?? queryStatus;
+
+            if (!string.IsNullOrWhiteSpace(effectiveStatus) && !StatusMap.ContainsKey(effectiveStatus))
+            {
+                return BadRequest(new
+                {
+                    Status = false,
+                    Message = "Status invalido. Usa 'Todos', 'Pendientes', 'Aceptados' o 'Rechazados'."
+                });
+            }
+
+            effectiveStatus = string.IsNullOrWhiteSpace(effectiveStatus)
+                ? null
+                : StatusMap[effectiveStatus];
+
+            var response = await _valeService.GetAllAsync(effectiveStatus);
+
+            if (!response.Status)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
+        }
+
+        [Authorize(Roles = "cliente")]
         [HttpPost("Solicitar")]
         public async Task<IActionResult> Create([FromBody] CreateValeDto dto)
         {
