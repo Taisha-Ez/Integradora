@@ -12,8 +12,8 @@ namespace fenixjobs_api.Domain.Documents
         [BsonElement("Action")]
         public string Action { get; set; } = string.Empty;
 
-        [BsonElement("Email")]
-        public string Email { get; set; } = string.Empty;
+        [BsonElement("User")]
+        public string User { get; set; } = string.Empty;
 
         [BsonElement("Details")]
         public string? Details { get; set; }

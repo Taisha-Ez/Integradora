@@ -16,6 +16,10 @@ namespace fenixjobs_api.Infrastructure.Persistence.MySQL
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Users>()
+                .HasIndex(u => u.usuario)
+                .IsUnique();
+
             modelBuilder.Entity<TypeCustomers>()
                 .HasOne(tc => tc.User)
                 .WithMany(u => u.TypeCustomers)

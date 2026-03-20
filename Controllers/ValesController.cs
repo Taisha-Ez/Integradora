@@ -49,7 +49,8 @@ namespace fenixjobs_api.Controllers
                 ? null
                 : StatusMap[effectiveStatus];
 
-            var response = await _valeService.GetAllAsync(effectiveStatus);
+            var actorUser = User.FindFirstValue("Usuario") ?? User.FindFirstValue(ClaimTypes.Name);
+            var response = await _valeService.GetAllAsync(effectiveStatus, actorUser);
 
             if (!response.Status)
             {
@@ -64,6 +65,7 @@ namespace fenixjobs_api.Controllers
         public async Task<IActionResult> Create([FromBody] CreateValeDto dto)
         {
             var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var actorUser = User.FindFirstValue("Usuario") ?? User.FindFirstValue(ClaimTypes.Name);
             if (!int.TryParse(userIdClaim, out var userId))
             {
                 return Unauthorized(new
@@ -73,7 +75,7 @@ namespace fenixjobs_api.Controllers
                 });
             }
 
-            var response = await _valeService.CreateForClientAsync(userId, dto);
+            var response = await _valeService.CreateForClientAsync(userId, dto, actorUser);
 
             if (!response.Status)
             {

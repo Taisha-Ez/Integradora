@@ -56,7 +56,7 @@ namespace fenixjobs_api.Application.Services.Auth
                 await _logRepository.AddLogAsync(new SystemLog
                 {
                     Action = "Register",
-                    Email = dto.Usuario,
+                    User = dto.Usuario,
                     Details = $"Usuario {dto.Usuario} registrado exitosamente como {newUser.tipo_usuario}",
                     CreatedAt = DateTime.UtcNow
                 });
@@ -100,7 +100,7 @@ namespace fenixjobs_api.Application.Services.Auth
             await _logRepository.AddLogAsync(new SystemLog
             {
                 Action = "Login",
-                Email = dto.Usuario,
+                User = dto.Usuario,
                 Details = "Inicio de sesion exitoso",
                 CreatedAt = DateTime.UtcNow
             });

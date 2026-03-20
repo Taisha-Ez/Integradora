@@ -1,4 +1,5 @@
 using fenixjobs_api.Application.Interfaces.Customers;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,7 +38,8 @@ namespace fenixjobs_api.Controllers
                 });
             }
 
-            var response = await _customerService.GetAllAsync(effectiveType);
+            var actorUser = User.FindFirstValue("Usuario") ?? User.FindFirstValue(ClaimTypes.Name);
+            var response = await _customerService.GetAllAsync(effectiveType, actorUser);
 
             if (!response.Status)
             {
