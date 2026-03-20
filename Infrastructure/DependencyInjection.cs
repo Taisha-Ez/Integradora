@@ -1,11 +1,14 @@
 ﻿using fenixjobs_api.Application.Interfaces;
 using fenixjobs_api.Application.Interfaces.Auth;
 using fenixjobs_api.Application.Interfaces.Customers;
+using fenixjobs_api.Application.Interfaces.Vales;
 using fenixjobs_api.Application.Services.Auth;
 using fenixjobs_api.Application.Services.Customers;
+using fenixjobs_api.Application.Services.Vales;
 using fenixjobs_api.Infrastructure.Persistence.MongoDB;
 using fenixjobs_api.Infrastructure.Persistence.MySQL;
 using fenixjobs_api.Infrastructure.Repositories.Customers;
+using fenixjobs_api.Infrastructure.Repositories.Vales;
 using fenixjobs_api.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
@@ -40,6 +43,8 @@ namespace fenixjobs_api.Infrastructure
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<IValeRepository, ValeRepository>();
+            services.AddScoped<IValeService, ValeService>();
             services.AddScoped<ISystemLogRepository, SystemLogRepository>();
 
             return services;

@@ -13,5 +13,6 @@ namespace fenixjobs_api.Infrastructure.Persistence.MongoDB
         }
 
         public IMongoCollection<SystemLog> SystemLogs => _database.GetCollection<SystemLog>("SystemLogs");
+        public IMongoCollection<Vale> Vales => _database.GetCollection<Vale>("Vales");
     }
 }
