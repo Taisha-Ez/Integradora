@@ -83,3 +83,31 @@ La documentación interactiva se abrirá en: `http://localhost:5185/swagger`
   "contrasenia": "password123"
 }
 ```
+
+## Endpoint de Credito
+
+### Solicitar credito
+* **POST** `/api/Creditos/solicitar`
+* Requiere JWT en el header `Authorization: Bearer {token}`.
+
+```json
+{
+  "nombre_completo": "Juan Perez Lopez",
+  "curp_rfc": "PELJ900101HDFXXX09",
+  "direccion": "Calle Falsa 123, Colonia Centro",
+  "telefono": "5512345678",
+  "ingresos_mensuales": 18000,
+  "referencias": [
+    {
+      "parentesco": "Padre",
+      "nombre": "Jose Perez",
+      "numero_contacto": "5511111111"
+    },
+    {
+      "parentesco": "Amigo",
+      "nombre": "Carlos Gomez",
+      "numero_contacto": "5522222222"
+    }
+  ]
+}
+```
