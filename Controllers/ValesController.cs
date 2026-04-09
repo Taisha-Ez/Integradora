@@ -84,5 +84,31 @@ namespace fenixjobs_api.Controllers
 
             return Ok(response);
         }
+
+        [Authorize(Roles = "cliente")]
+        [HttpPost("{valeId}/Pagar")]
+        public async Task<IActionResult> Pay([FromRoute] string valeId, [FromBody] PayValeDto dto)
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var actorUser = User.FindFirstValue("Usuario") ?? User.FindFirstValue(ClaimTypes.Name);
+
+            if (!int.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized(new
+                {
+                    Status = false,
+                    Message = "Token invalido: no se encontro el identificador del usuario."
+                });
+            }
+
+            var response = await _valeService.PayAsync(userId, valeId, dto, actorUser);
+
+            if (!response.Status)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
+        }
     }
 }

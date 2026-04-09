@@ -30,6 +30,9 @@ namespace fenixjobs_api.Domain.Documents
         [BsonElement("MontoSolicitado")]
         public decimal MontoSolicitado { get; set; }
 
+        [BsonElement("MontoRestante")]
+        public decimal MontoRestante { get; set; }
+
         [BsonElement("PlazoPagoMeses")]
         public int PlazoPagoMeses { get; set; }
 

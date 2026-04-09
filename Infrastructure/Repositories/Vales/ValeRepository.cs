@@ -19,6 +19,18 @@ namespace fenixjobs_api.Infrastructure.Repositories.Vales
             await _context.Vales.InsertOneAsync(vale);
         }
 
+        public async Task<Vale?> GetByIdAsync(string valeId)
+        {
+            return await _context.Vales
+                .Find(v => v.id == valeId)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task UpdateAsync(Vale vale)
+        {
+            await _context.Vales.ReplaceOneAsync(v => v.id == vale.id, vale);
+        }
+
         public async Task<List<Vale>> GetAllAsync(string? status = null)
         {
             var filter = string.IsNullOrWhiteSpace(status)
