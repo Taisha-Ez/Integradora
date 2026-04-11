@@ -136,6 +136,58 @@ namespace fenixjobs_api.Application.Services.Creditos
             return response;
         }
 
+        public async Task<ServiceResponseDto<CreditBalanceDto>> GetBalanceAsync(int userId, string? actorUser = null)
+        {
+            var response = new ServiceResponseDto<CreditBalanceDto>();
+            var logUser = string.IsNullOrWhiteSpace(actorUser) ? userId.ToString() : actorUser;
+
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
+            {
+                response.Status = false;
+                response.Message = "Usuario no encontrado.";
+                return response;
+            }
+
+            var creditRequest = await _creditRequestRepository.GetActiveByUserIdAsync(userId);
+            if (creditRequest == null)
+            {
+                response.Status = false;
+                response.Message = "No cuentas con un credito autorizado activo.";
+
+                await _logRepository.AddLogAsync(new SystemLog
+                {
+                    Action = "CreditRequests.GetBalance",
+                    User = logUser,
+                    Details = "Consulta de saldo rechazada. Sin credito activo.",
+                    CreatedAt = DateTime.UtcNow
+                });
+
+                return response;
+            }
+
+            response.Data = new CreditBalanceDto
+            {
+                CreditRequestId = creditRequest.Id,
+                UserId = creditRequest.UserId,
+                UserName = user.usuario,
+                SaldoDisponible = creditRequest.EstimatedCredit,
+                Status = creditRequest.Status,
+                CreatedAt = creditRequest.CreatedAt
+            };
+            response.Message = "Saldo de credito obtenido exitosamente.";
+
+            await _logRepository.AddLogAsync(new SystemLog
+            {
+                Action = "CreditRequests.GetBalance",
+                User = logUser,
+                Details = $"Saldo consultado exitosamente. Credito disponible: {creditRequest.EstimatedCredit}.",
+                CreatedAt = DateTime.UtcNow
+            });
+
+            return response;
+        }
+
         private static decimal CalculateEstimatedCredit(decimal monthlyIncome, IReadOnlyCollection<CreditReferenceDto> references)
         {
             var incomeBonus = monthlyIncome switch

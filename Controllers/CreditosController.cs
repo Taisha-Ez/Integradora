@@ -42,5 +42,31 @@ namespace fenixjobs_api.Controllers
 
             return Ok(response);
         }
+
+        [Authorize(Roles = "cliente")]
+        [HttpGet("saldo")]
+        public async Task<IActionResult> GetBalance()
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var actorUser = User.FindFirstValue("Usuario") ?? User.FindFirstValue(ClaimTypes.Name);
+
+            if (!int.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized(new
+                {
+                    Status = false,
+                    Message = "Token invalido: no se encontro el identificador del usuario."
+                });
+            }
+
+            var response = await _creditRequestService.GetBalanceAsync(userId, actorUser);
+
+            if (!response.Status)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
+        }
     }
 }

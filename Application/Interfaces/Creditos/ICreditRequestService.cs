@@ -6,5 +6,6 @@ namespace fenixjobs_api.Application.Interfaces.Creditos
     public interface ICreditRequestService
     {
         Task<ServiceResponseDto<CreditRequestResponseDto>> CreateForUserAsync(int userId, CreateCreditRequestDto dto, string? actorUser = null);
+        Task<ServiceResponseDto<CreditBalanceDto>> GetBalanceAsync(int userId, string? actorUser = null);
     }
 }
