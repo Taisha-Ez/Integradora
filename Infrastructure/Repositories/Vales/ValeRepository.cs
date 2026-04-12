@@ -42,5 +42,20 @@ namespace fenixjobs_api.Infrastructure.Repositories.Vales
                 .SortByDescending(v => v.CreatedAt)
                 .ToListAsync();
         }
+
+        public async Task<List<Vale>> GetByUserIdAsync(int userId, string? status = null)
+        {
+            var userFilter = Builders<Vale>.Filter.Eq(v => v.UserId, userId);
+            var statusFilter = string.IsNullOrWhiteSpace(status)
+                ? Builders<Vale>.Filter.Empty
+                : Builders<Vale>.Filter.Eq(v => v.Status, status);
+
+            var filter = Builders<Vale>.Filter.And(userFilter, statusFilter);
+
+            return await _context.Vales
+                .Find(filter)
+                .SortByDescending(v => v.CreatedAt)
+                .ToListAsync();
+        }
     }
 }

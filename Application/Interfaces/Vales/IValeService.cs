@@ -9,5 +9,6 @@ namespace fenixjobs_api.Application.Interfaces.Vales
         Task<ServiceResponseDto<Vale>> CreateForClientAsync(int userId, CreateValeDto dto, string? actorUser = null);
         Task<ServiceResponseDto<Vale>> PayAsync(int userId, string valeId, PayValeDto dto, string? actorUser = null);
         Task<ServiceResponseDto<List<Vale>>> GetAllAsync(string? status = null, string? actorUser = null);
+        Task<ServiceResponseDto<List<Vale>>> GetByUserAsync(int userId, string? status = null, string? actorUser = null);
     }
 }

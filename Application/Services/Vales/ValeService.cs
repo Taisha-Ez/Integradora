@@ -306,5 +306,40 @@ namespace fenixjobs_api.Application.Services.Vales
 
             return response;
         }
+
+        public async Task<ServiceResponseDto<List<Vale>>> GetByUserAsync(int userId, string? status = null, string? actorUser = null)
+        {
+            var response = new ServiceResponseDto<List<Vale>>();
+            var logUser = string.IsNullOrWhiteSpace(actorUser) ? userId.ToString() : actorUser;
+
+            try
+            {
+                response.Data = await _valeRepository.GetByUserIdAsync(userId, status);
+                response.Message = "Vales del cliente obtenidos exitosamente.";
+
+                await _logRepository.AddLogAsync(new SystemLog
+                {
+                    Action = "Vales.GetByUser",
+                    User = logUser,
+                    Details = $"Consulta de vales del cliente ejecutada. Filtro status: {status ?? "Todos"}. Total: {response.Data?.Count ?? 0}",
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = "Error al obtener tus vales: " + ex.Message;
+
+                await _logRepository.AddLogAsync(new SystemLog
+                {
+                    Action = "Vales.GetByUser",
+                    User = logUser,
+                    Details = $"Error al consultar vales del cliente. Filtro status: {status ?? "Todos"}. Error: {ex.Message}",
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+
+            return response;
+        }
     }
 }

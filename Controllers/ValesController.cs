@@ -61,6 +61,44 @@ namespace fenixjobs_api.Controllers
         }
 
         [Authorize(Roles = "cliente")]
+        [HttpGet("mis-vales")]
+        public async Task<IActionResult> GetMyVales([FromQuery(Name = "status")] string? status = null)
+        {
+            if (!string.IsNullOrWhiteSpace(status) && !StatusMap.ContainsKey(status))
+            {
+                return BadRequest(new
+                {
+                    Status = false,
+                    Message = "Status invalido. Usa 'Todos', 'Pendientes', 'Aceptados' o 'Rechazados'."
+                });
+            }
+
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var actorUser = User.FindFirstValue("Usuario") ?? User.FindFirstValue(ClaimTypes.Name);
+            if (!int.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized(new
+                {
+                    Status = false,
+                    Message = "Token invalido: no se encontro el identificador del usuario."
+                });
+            }
+
+            var normalizedStatus = string.IsNullOrWhiteSpace(status)
+                ? null
+                : StatusMap[status];
+
+            var response = await _valeService.GetByUserAsync(userId, normalizedStatus, actorUser);
+
+            if (!response.Status)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
+        }
+
+        [Authorize(Roles = "cliente")]
         [HttpPost("Solicitar")]
         public async Task<IActionResult> Create([FromBody] CreateValeDto dto)
         {
