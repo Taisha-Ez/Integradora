@@ -19,7 +19,9 @@ namespace fenixjobs_api.Controllers
             ["Aceptado"] = "Aceptado",
             ["Aceptados"] = "Aceptado",
             ["Rechazado"] = "Rechazado",
-            ["Rechazados"] = "Rechazado"
+            ["Rechazados"] = "Rechazado",
+            ["Pagado"] = "Pagado",
+            ["Pagados"] = "Pagado"
         };
 
         private readonly IValeService _valeService;
@@ -41,7 +43,7 @@ namespace fenixjobs_api.Controllers
                 return BadRequest(new
                 {
                     Status = false,
-                    Message = "Status invalido. Usa 'Todos', 'Pendientes', 'Aceptados' o 'Rechazados'."
+                    Message = "Status invalido. Usa 'Todos', 'Pendientes', 'Aceptados', 'Rechazados' o 'Pagados'."
                 });
             }
 
@@ -69,7 +71,7 @@ namespace fenixjobs_api.Controllers
                 return BadRequest(new
                 {
                     Status = false,
-                    Message = "Status invalido. Usa 'Todos', 'Pendientes', 'Aceptados' o 'Rechazados'."
+                    Message = "Status invalido. Usa 'Todos', 'Pendientes', 'Aceptados', 'Rechazados' o 'Pagados'."
                 });
             }
 
