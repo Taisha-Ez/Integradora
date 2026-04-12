@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using fenixjobs_api.Application.DTOs.Vales;
 using fenixjobs_api.Application.Interfaces.Vales;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -51,6 +52,29 @@ namespace fenixjobs_api.Controllers
 
             var actorUser = User.FindFirstValue("Usuario") ?? User.FindFirstValue(ClaimTypes.Name);
             var response = await _valeService.GetAllAsync(effectiveStatus, actorUser);
+
+            if (!response.Status)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
+        }
+
+        [HttpPost("{valeId}/resolver")]
+        public async Task<IActionResult> ResolveByAdmin([FromRoute] string valeId, [FromBody] ResolveValeStatusDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Status))
+            {
+                return BadRequest(new
+                {
+                    Status = false,
+                    Message = "Debes enviar el status del vale: 'Aceptado' o 'Rechazado'."
+                });
+            }
+
+            var actorUser = User.FindFirstValue("Usuario") ?? User.FindFirstValue(ClaimTypes.Name);
+            var response = await _valeService.ResolveByAdminAsync(valeId, dto, actorUser);
 
             if (!response.Status)
             {

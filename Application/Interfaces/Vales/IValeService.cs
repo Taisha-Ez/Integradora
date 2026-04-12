@@ -7,6 +7,7 @@ namespace fenixjobs_api.Application.Interfaces.Vales
     public interface IValeService
     {
         Task<ServiceResponseDto<Vale>> CreateForClientAsync(int userId, CreateValeDto dto, string? actorUser = null);
+        Task<ServiceResponseDto<Vale>> ResolveByAdminAsync(string valeId, ResolveValeStatusDto dto, string? actorUser = null);
         Task<ServiceResponseDto<Vale>> PayAsync(int userId, string valeId, PayValeDto dto, string? actorUser = null);
         Task<ServiceResponseDto<List<Vale>>> GetAllAsync(string? status = null, string? actorUser = null);
         Task<ServiceResponseDto<List<Vale>>> GetByUserAsync(int userId, string? status = null, string? actorUser = null);

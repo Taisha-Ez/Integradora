@@ -272,6 +272,99 @@ namespace fenixjobs_api.Application.Services.Vales
             return response;
         }
 
+        public async Task<ServiceResponseDto<Vale>> ResolveByAdminAsync(string valeId, ResolveValeStatusDto dto, string? actorUser = null)
+        {
+            var response = new ServiceResponseDto<Vale>();
+            var logUser = string.IsNullOrWhiteSpace(actorUser) ? "admin" : actorUser;
+
+            var normalizedStatus = dto.Status.Trim();
+            if (!string.Equals(normalizedStatus, "Aceptado", StringComparison.OrdinalIgnoreCase) &&
+                !string.Equals(normalizedStatus, "Rechazado", StringComparison.OrdinalIgnoreCase))
+            {
+                response.Status = false;
+                response.Message = "Status invalido. Solo se permite 'Aceptado' o 'Rechazado'.";
+                return response;
+            }
+
+            normalizedStatus = string.Equals(normalizedStatus, "Aceptado", StringComparison.OrdinalIgnoreCase)
+                ? "Aceptado"
+                : "Rechazado";
+
+            var vale = await _valeRepository.GetByIdAsync(valeId);
+            if (vale == null)
+            {
+                response.Status = false;
+                response.Message = "Vale no encontrado.";
+                return response;
+            }
+
+            if (!string.Equals(vale.Status, "Pendiente", StringComparison.OrdinalIgnoreCase))
+            {
+                response.Status = false;
+                response.Message = "Solo se pueden resolver vales con status Pendiente.";
+                return response;
+            }
+
+            if (normalizedStatus == "Rechazado")
+            {
+                var creditRequest = await _creditRequestRepository.GetActiveByUserIdAsync(vale.UserId);
+                if (creditRequest == null)
+                {
+                    response.Status = false;
+                    response.Message = "No se encontro un credito autorizado activo para devolver el saldo del vale rechazado.";
+                    return response;
+                }
+
+                var refundAmount = vale.MontoRestante > 0 ? vale.MontoRestante : vale.MontoSolicitado;
+
+                creditRequest.EstimatedCredit += refundAmount;
+                await _creditRequestRepository.UpdateAsync(creditRequest);
+
+                vale.MontoRestante = 0;
+                vale.Status = "Rechazado";
+
+                try
+                {
+                    await _valeRepository.UpdateAsync(vale);
+                }
+                catch
+                {
+                    creditRequest.EstimatedCredit -= refundAmount;
+                    await _creditRequestRepository.UpdateAsync(creditRequest);
+                    throw;
+                }
+
+                response.Data = vale;
+                response.Message = $"Vale rechazado y saldo devuelto correctamente. Monto devuelto: {refundAmount}.";
+
+                await _logRepository.AddLogAsync(new SystemLog
+                {
+                    Action = "Vales.ResolveByAdmin",
+                    User = logUser,
+                    Details = $"Vale rechazado. ValeId: {valeId}, UsuarioId: {vale.UserId}, Monto devuelto: {refundAmount}.",
+                    CreatedAt = DateTime.UtcNow
+                });
+
+                return response;
+            }
+
+            vale.Status = "Aceptado";
+            await _valeRepository.UpdateAsync(vale);
+
+            response.Data = vale;
+            response.Message = "Vale aceptado correctamente.";
+
+            await _logRepository.AddLogAsync(new SystemLog
+            {
+                Action = "Vales.ResolveByAdmin",
+                User = logUser,
+                Details = $"Vale aceptado. ValeId: {valeId}, UsuarioId: {vale.UserId}.",
+                CreatedAt = DateTime.UtcNow
+            });
+
+            return response;
+        }
+
         public async Task<ServiceResponseDto<List<Vale>>> GetAllAsync(string? status = null, string? actorUser = null)
         {
             var response = new ServiceResponseDto<List<Vale>>();
