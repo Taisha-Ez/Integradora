@@ -188,6 +188,41 @@ namespace fenixjobs_api.Application.Services.Creditos
             return response;
         }
 
+        public async Task<ServiceResponseDto<List<ClientCreditSummaryDto>>> GetClientsWithCreditAsync(string? actorUser = null)
+        {
+            var response = new ServiceResponseDto<List<ClientCreditSummaryDto>>();
+            var logUser = string.IsNullOrWhiteSpace(actorUser) ? "admin" : actorUser;
+
+            try
+            {
+                response.Data = await _creditRequestRepository.GetClientsWithCreditAsync();
+                response.Message = "Clientes con credito solicitado obtenidos exitosamente.";
+
+                await _logRepository.AddLogAsync(new SystemLog
+                {
+                    Action = "CreditRequests.GetClientsWithCredit",
+                    User = logUser,
+                    Details = $"Consulta de clientes con credito ejecutada. Total: {response.Data?.Count ?? 0}",
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = "Error al obtener clientes con credito: " + ex.Message;
+
+                await _logRepository.AddLogAsync(new SystemLog
+                {
+                    Action = "CreditRequests.GetClientsWithCredit",
+                    User = logUser,
+                    Details = $"Error al consultar clientes con credito. Error: {ex.Message}",
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+
+            return response;
+        }
+
         private static decimal CalculateEstimatedCredit(decimal monthlyIncome, IReadOnlyCollection<CreditReferenceDto> references)
         {
             var incomeBonus = monthlyIncome switch
