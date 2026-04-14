@@ -1,5 +1,5 @@
-using fenixjobs_api.Application.Interfaces.Creditos;
 using fenixjobs_api.Application.DTOs.Creditos;
+using fenixjobs_api.Application.Interfaces.Creditos;
 using fenixjobs_api.Domain.Entities;
 using fenixjobs_api.Infrastructure.Persistence.MySQL;
 using Microsoft.EntityFrameworkCore;
@@ -40,29 +40,28 @@ namespace fenixjobs_api.Infrastructure.Repositories.Creditos
 
         public async Task<List<ClientCreditSummaryDto>> GetClientsWithCreditAsync()
         {
-            var creditRows = await _context.CreditRequests
-                .AsNoTracking()
-                .Join(
-                    _context.Users.AsNoTracking(),
-                    creditRequest => creditRequest.UserId,
-                    user => user.id_usuario,
-                    (creditRequest, user) => new
-                    {
-                        UserId = user.id_usuario,
-                        Usuario = user.usuario,
-                        Nombre = user.nombre,
-                        ApellidoPaterno = user.apellido_paterno,
-                        ApellidoMaterno = user.apellido_materno,
-                        TipoUsuario = user.tipo_usuario,
-                        CreditRequestId = creditRequest.Id,
-                        CurpRfc = creditRequest.CurpRfc,
-                        MonthlyIncome = creditRequest.MonthlyIncome,
-                        EstimatedCredit = creditRequest.EstimatedCredit,
-                        Status = creditRequest.Status,
-                        CreatedAt = creditRequest.CreatedAt
-                    })
-                .Where(item => item.TipoUsuario == "cliente")
-                .OrderByDescending(item => item.CreatedAt)
+            var creditRows = await (
+                from creditRequest in _context.CreditRequests.AsNoTracking()
+                join user in _context.Users.AsNoTracking()
+                    on creditRequest.UserId equals user.id_usuario into userGroup
+                from user in userGroup.DefaultIfEmpty()
+                where user == null || user.tipo_usuario == "cliente"
+                orderby creditRequest.CreatedAt descending
+                select new
+                {
+                    UserId = creditRequest.UserId,
+                    Usuario = user != null ? user.usuario : string.Empty,
+                    Nombre = user != null ? user.nombre : creditRequest.FullName,
+                    ApellidoPaterno = user != null ? user.apellido_paterno : null,
+                    ApellidoMaterno = user != null ? user.apellido_materno : null,
+                    TipoUsuario = user != null ? user.tipo_usuario : "cliente",
+                    CreditRequestId = creditRequest.Id,
+                    CurpRfc = creditRequest.CurpRfc,
+                    MonthlyIncome = creditRequest.MonthlyIncome,
+                    EstimatedCredit = creditRequest.EstimatedCredit,
+                    Status = creditRequest.Status,
+                    CreatedAt = creditRequest.CreatedAt
+                })
                 .ToListAsync();
 
             return creditRows
