@@ -36,6 +36,9 @@ namespace fenixjobs_api.Domain.Documents
         [BsonElement("PlazoPagoMeses")]
         public int PlazoPagoMeses { get; set; }
 
+        [BsonElement("MontoPagoMensual")]
+        public decimal MontoPagoMensual { get; set; }
+
         [BsonElement("Status")]
         public string Status { get; set; } = "Pendiente";
 

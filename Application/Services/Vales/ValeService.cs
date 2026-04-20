@@ -58,6 +58,21 @@ namespace fenixjobs_api.Application.Services.Vales
                 return response;
             }
 
+            if (dto.MontoPagoMensual <= 0)
+            {
+                response.Status = false;
+                response.Message = "El monto de pago mensual debe ser mayor a 0.";
+
+                await _logRepository.AddLogAsync(new SystemLog
+                {
+                    Action = "Vales.Create",
+                    User = logUser,
+                    Details = "Solicitud de vale rechazada por monto mensual invalido.",
+                    CreatedAt = DateTime.UtcNow
+                });
+                return response;
+            }
+
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
             {
@@ -136,6 +151,7 @@ namespace fenixjobs_api.Application.Services.Vales
                 MontoSolicitado = dto.MontoSolicitar,
                 MontoRestante = dto.MontoSolicitar,
                 PlazoPagoMeses = dto.PlazoPagoMeses,
+                MontoPagoMensual = dto.MontoPagoMensual,
                 Status = "Pendiente",
                 CreatedAt = DateTime.UtcNow
             };
@@ -158,7 +174,7 @@ namespace fenixjobs_api.Application.Services.Vales
             {
                 Action = "Vales.Create",
                 User = logUser,
-                Details = $"Vale creado exitosamente. Monto: {dto.MontoSolicitar}, Plazo: {dto.PlazoPagoMeses}, Status: Pendiente, Credito restante: {creditRequest.EstimatedCredit}.",
+                Details = $"Vale creado exitosamente. Monto: {dto.MontoSolicitar}, Plazo: {dto.PlazoPagoMeses}, Pago mensual: {dto.MontoPagoMensual}, Status: Pendiente, Credito restante: {creditRequest.EstimatedCredit}.",
                 CreatedAt = DateTime.UtcNow
             });
 

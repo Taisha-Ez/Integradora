@@ -9,5 +9,8 @@ namespace fenixjobs_api.Application.DTOs.Vales
 
         [JsonPropertyName("plazo_pago_meses")]
         public int PlazoPagoMeses { get; set; }
+
+        [JsonPropertyName("monto_pago_mensual")]
+        public decimal MontoPagoMensual { get; set; }
     }
 }
